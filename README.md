@@ -26,6 +26,9 @@ Este projeto utiliza 10 documentos sobre Interação Humano-Computador e Anális
 * **Embeddings:** HuggingFace `all-MiniLM-L6-v2`.
 * **Persistência:** SQLite (gestão local de tarefas).
 
+* ## IAs e Ferramentas Utilizadas
+**GitHub Copilot/ChatGPT/Gemini:** Auxílio na estruturação do código e resolução de bugs.
+
 ## 🚀 Como Instalar e Executar
 
 Siga os passos abaixo para configurar o ambiente de execução:
