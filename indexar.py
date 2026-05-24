@@ -60,4 +60,3 @@ db = Chroma.from_documents(chunks, embeddings, persist_directory=diretorio_db)
 # Se o script chegou aqui e o count for > 0, o seu banco está pronto!
 print(f"\nSUCESSO TOTAL!")
 print(f"O banco de dados foi criado com {len(chunks)} trechos de texto.")
-print("Agora você pode rodar o seu agente sem medo.")
