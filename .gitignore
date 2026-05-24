@@ -1,0 +1,11 @@
+# Ambiente virtual
+venv/
+.venv/
+
+# Arquivos de cache e banco de dados
+__pycache__/
+chromadb/
+tarefas.db
+dataset.db
+*.log
+.env
