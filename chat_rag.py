@@ -35,8 +35,13 @@ def responder_pergunta(pergunta):
     
     # --- PASSO 2: Montar o prompt ---
     prompt = f"""
-    Você é o JARVIS Acadêmico.
-    Se precisar usar uma ferramenta, escreva o JSON exatamente assim (use apenas uma ação por vez):
+    Você é o JARVIS Acadêmico. 
+    
+    REGRA DE OURO: Use APENAS as informações fornecidas no 'Contexto acadêmico' abaixo para responder. 
+    Se a resposta para a pergunta do usuário não estiver contida no contexto, responda exatamente: "Desculpe, essa informação não consta nos documentos do projeto."
+    Não utilize seu conhecimento externo para responder perguntas que não estão nos documentos.
+
+    Se precisar usar uma ferramenta, escreva o JSON exatamente assim:
     JSON_TOOL: {{"acao": "adicionar_tarefa_agenda", "tarefa": "...", "data": "..."}}
     JSON_TOOL: {{"acao": "listar_tarefas"}}
     JSON_TOOL: {{"acao": "concluir_tarefa", "id_tarefa": 1}}
