@@ -17,7 +17,8 @@ logging.basicConfig(
 
 client = OpenAI(
     base_url='https://llm.liaufms.org/v1/qwen2-5-14b-instruct-awq',
-    api_key='REIkURcI7rTTqsTwlJi8MrgnKFwOiqky7Ezh7hH-l-k'
+    api_key='REIkURcI7rTTqsTwlJi8MrgnKFwOiqky7Ezh7hH-l-k',
+    timeout=120.0,
 )
 
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -41,7 +42,14 @@ REGRAS OBRIGATÓRIAS:
 - Para consultas sobre materiais, use exclusivamente o CONTEXTO ACADÊMICO fornecido.
 - Se a informação não estiver no contexto, responda: "Desculpe, essa informação não consta nos documentos do projeto."
 - Nunca invente dados ou use conhecimento externo não fornecido.
-- Responda sempre em português do Brasil."""
+- Responda sempre em português do Brasil.
+
+REGRAS DE ROTEAMENTO — SIGA RIGOROSAMENTE:
+- Palavras como "priorizar", "plano de estudos", "o que estudar", "me ajude a estudar", "como me preparar" → OBRIGATORIAMENTE use planejar_estudos
+- Palavras como "tenho hoje", "tenho amanhã", "agenda do dia" → use consultar_agenda
+- Palavras como "minhas tarefas", "tarefas pendentes", "o que tenho para fazer" → use listar_tarefas
+- Palavras como "exercícios", "questões sobre", "me faça perguntas" → use gerar_exercicios
+- Palavras como "active recall", "me teste", "me avalie sobre" → use active_recall"""
 
 
 def _chamar_llm(mensagens: list) -> str:
@@ -75,16 +83,16 @@ def _executar_ferramenta(data_json: dict) -> tuple[str, object]:
         resultado = "\n\n".join([d.page_content for d in docs])
 
     elif acao == "planejar_estudos":
-        topico = data_json.get('topico', '')
+        topico = data_json.get('topico', 'estudos gerais')
         data_prova = data_json.get('data_prova')
         tarefas_str = listar_tarefas()
         agenda_str = listar_tarefas(data_prova) if data_prova else "Nenhuma data de prova especificada."
-        docs = db.similarity_search(topico, k=5)
+        docs = db.similarity_search(topico, k=3)
         material = "\n\n".join([d.page_content for d in docs])
         resultado = {
             "tarefas_pendentes": tarefas_str,
             "agenda": agenda_str,
-            "material": material[:2500],
+            "material": material[:1500],
         }
 
     elif acao == "gerar_exercicios":
@@ -125,7 +133,7 @@ MATERIAL DE ESTUDO DISPONÍVEL:
 
 SOLICITAÇÃO DO USUÁRIO: {pergunta_original}
 
-Monte um plano organizado com tópicos prioritários, sugestões de tempo por tema e orientações práticas de estudo."""
+Crie um plano de estudos objetivo com no máximo 5 tópicos prioritários e sugestões práticas de tempo. Seja conciso."""
 
     elif acao == "gerar_exercicios":
         r = resultado
