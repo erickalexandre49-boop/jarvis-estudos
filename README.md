@@ -1,59 +1,93 @@
 # Jarvis: Assistente de Estudos e Gestão Acadêmica
 
-Este projeto consiste em um agente inteligente desenvolvido para auxiliar estudantes na organização de tarefas e consulta de conteúdos técnicos. O sistema combina um mecanismo de **RAG (Retrieval-Augmented Generation)** com um gerenciador de tarefas persistente, operando de forma modular via terminal.
+Este projeto consiste em um agente inteligente desenvolvido para auxiliar estudantes na organização de tarefas, consulta de conteúdos técnicos e aprendizado ativo. O sistema combina **RAG (Retrieval-Augmented Generation)**, **Tool Calling** e um **gerenciador de tarefas persistente**, com interface web via Streamlit.
 
-## 🏗️ Estrutura do Projeto
+## Estrutura do Projeto
 
-O sistema foi arquitetado para promover a separação de responsabilidades (baixa acoplagem), facilitando a manutenção e a escalabilidade:
+| Arquivo | Responsabilidade |
+|---------|-----------------|
+| `agente.py` | Loop de conversa via terminal (alternativa ao Streamlit) |
+| `chat_rag.py` | Orquestração central: RAG, LLM, tool calling e active recall |
+| `app.py` | Interface web Streamlit com histórico e sidebar de tarefas |
+| `database.py` | Camada de persistência SQLite (CRUD de tarefas) |
+| `ferramentas.py` | Wrappers das ferramentas disponíveis ao agente |
+| `indexar.py` | Script de setup: processa PDFs e cria o banco vetorial |
+| `data/` | 10 documentos acadêmicos em PDF (IHC e APS) |
+| `chroma_db/` | Banco de dados vetorial gerado pelo `indexar.py` |
 
-* `agente.py`: O "cérebro" do projeto. Gerencia o loop de conversa, o classificador de intenções e o roteamento entre as ferramentas e o RAG.
-* `chat_rag.py`: Módulo especializado na lógica de consulta aos documentos (RAG) e interação com a base vetorial.
-* `database.py`: Camada de persistência de dados (CRUD) usando SQLite para gestão de tarefas.
-* `ferramentas.py`: Contém a lógica das funções auxiliares que o agente utiliza (ações na agenda).
-* `indexar.py`: Script de preparação (setup) responsável por processar os PDFs e criar a base vetorial.
-* `data/`: Pasta contendo os 10 documentos técnicos (PDFs) sobre IHC e APS.
-* `chroma_db/`: Banco de dados vetorial (gerado na primeira execução).
+## Funcionalidades
 
-## 📊 Dataset
-Este projeto utiliza 10 documentos sobre Interação Humano-Computador e Análise e Projeto de Software Orientado a Objetos armazenados na pasta `/data`.
-* [Clique aqui para ver a documentação técnica detalhada do dataset](./DATASET.md)
+### Trabalho 1
+- **3.1 Consulta a materiais (RAG):** perguntas sobre os PDFs indexados
+- **3.2 Agenda acadêmica:** consulta e adição de eventos por data
+- **3.3 Lista de tarefas:** adicionar, listar, concluir e remover tarefas
 
-## ⚙️ Tecnologias Utilizadas
+### Trabalho 2 (novas funcionalidades)
+- **3.4 Planejamento de estudos:** combina agenda + tarefas + material RAG para gerar um plano personalizado
+- **Geração de exercícios:** cria questões práticas sobre qualquer tópico do dataset
+- **Active Recall interativo:** o sistema gera uma pergunta, o aluno responde, e o sistema avalia e fornece feedback detalhado
+- **Histórico de conversa:** o agente mantém o contexto das últimas trocas
+- **Data atual injetada:** o agente resolve "hoje", "amanhã" e "esta semana" corretamente
 
-* **Orquestração:** LangChain (integração entre memória, ferramentas e LLM).
-* **LLM:** Google Gemma 3 12B (via API institucional).
-* **Base de Dados Vetorial:** ChromaDB (armazenamento semântico).
-* **Embeddings:** HuggingFace `all-MiniLM-L6-v2`.
-* **Persistência:** SQLite (gestão local de tarefas).
+## Ferramentas Disponíveis (Tool Calling)
 
-## 🚀 Como Instalar e Executar
+| # | Ferramenta | Descrição |
+|---|-----------|-----------|
+| 1 | `adicionar_tarefa_agenda` | Adiciona tarefa com data |
+| 2 | `consultar_agenda` | Consulta tarefas de uma data específica |
+| 3 | `listar_tarefas` | Lista todas as tarefas pendentes |
+| 4 | `concluir_tarefa` | Marca tarefa como concluída pelo ID |
+| 5 | `remover_tarefa` | Remove tarefa pelo ID |
+| 6 | `buscar_material_rag` | Busca semântica nos documentos |
+| 7 | `planejar_estudos` | Gera plano de estudos personalizado |
+| 8 | `gerar_exercicios` | Cria exercícios sobre um tópico |
+| 9 | `active_recall` | Inicia sessão de active recall interativa |
 
-Siga os passos abaixo para configurar o ambiente de execução:
+## Dataset
+
+- **10 documentos** acadêmicos sobre IHC e Análise e Projeto de Software
+- Veja [DATASET.md](./DATASET.md) para documentação completa (origem, limitações, estratégia de chunking)
+
+## Avaliação e Análise de Erros
+
+- Veja [AVALIACAO.md](./AVALIACAO.md) para a avaliação com 10 perguntas e 3 análises de falhas
+
+## Tecnologias
+
+| Camada | Tecnologia |
+|--------|-----------|
+| LLM | Qwen2.5-14B-Instruct-AWQ (API institucional UFMS) |
+| Orquestração | LangChain |
+| Banco vetorial | ChromaDB |
+| Embeddings | HuggingFace `all-MiniLM-L6-v2` |
+| Persistência | SQLite |
+| Interface | Streamlit |
+
+## Como Instalar e Executar
 
 ### 1. Pré-requisitos
-* Python 3.10 ou superior instalado.
-* `pip` instalado.
+- Python 3.10 ou superior
+- `pip` instalado
 
-### 2. Instalação de Dependências
-No terminal, dentro da pasta raiz do projeto, instale as bibliotecas necessárias:
-
+### 2. Instalar dependências
 ```bash
 pip install -r requirements.txt
+```
 
-Configuração Inicial (Indexação)
-O sistema necessita que os documentos sejam processados para o RAG funcionar. Execute o script de indexação uma única vez:
-
-Bash
+### 3. Indexar os documentos (apenas na primeira vez)
+```bash
 python indexar.py
+```
 
-## 🚀 Como Executar
+### 4. Iniciar a interface
+**Opção 1 — Automático:** clique duas vezes em `iniciar.bat`
 
-Existem duas formas de iniciar o Jarvis:
+**Opção 2 — Manual:**
+```bash
+python -m streamlit run app.py
+```
 
-**Opção 1: Execução Automática (Recomendado)**
-Basta dar dois cliques no arquivo `iniciar.bat` localizado na raiz do projeto. Ele ativará o ambiente virtual e iniciará a interface automaticamente.
+## IAs Utilizadas no Desenvolvimento
 
-**Opção 2: Execução Manual (Terminal)**
-Se preferir ou se precisar depurar o sistema, abra o terminal na pasta do projeto e execute:
-1. Ative o ambiente: `.\venv\Scripts\activate`
-2. Inicie o sistema: `python -m streamlit run app.py`
+- **Cursor (Claude Sonnet):** geração e refatoração de código, arquitetura do sistema
+- **Qwen2.5-14B-Instruct-AWQ:** LLM de produção do agente (via API institucional)

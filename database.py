@@ -43,10 +43,7 @@ def listar_tarefas(data=None):
     tarefas = cursor.fetchall()
     conn.close()
 
-<<<<<<< HEAD
     #Verificamos se há tarefas
-=======
->>>>>>> 793fc46 (Limpeza: removendo arquivos desnecessários e ignorando pastas de cache/banco)
     if not tarefas:
         if data:
             return f"Você não tem nada pendente para o dia {data}."

@@ -1,26 +1,33 @@
-# ferramentas.py
+"""
+ferramentas.py — Wrappers de ferramentas do JARVIS.
 
-# Importe o seu módulo de banco de dados e o de RAG
+Cada função aqui representa uma ferramenta disponível para o agente.
+A orquestração (decisão de qual chamar) é feita pela LLM em chat_rag.py.
+"""
+
 import database
-import chat_rag 
 
-def adicionar_tarefa_agenda(tarefa, data):
-    """Adiciona uma tarefa na agenda."""
+
+def consultar_agenda(data: str = None) -> str:
+    """Consulta a agenda para uma data específica (formato YYYY-MM-DD) ou lista tudo."""
+    return database.listar_tarefas(data)
+
+
+def adicionar_tarefa_agenda(tarefa: str, data: str) -> str:
+    """Adiciona uma nova tarefa na agenda com uma data limite."""
     return database.adicionar_tarefa(tarefa, data)
 
-def listar_tarefas():
-    """Lista todas as tarefas pendentes na agenda."""
-    return database.obter_todas_tarefas()
 
-def concluir_tarefa(id_tarefa):
-    """Marca uma tarefa como concluída."""
-    return database.marcar_como_concluida(id_tarefa)
+def listar_tarefas() -> str:
+    """Lista todas as tarefas pendentes."""
+    return database.listar_tarefas()
 
-def remover_tarefa(id_tarefa):
-    """Remove uma tarefa da agenda."""
+
+def concluir_tarefa(id_tarefa: int) -> str:
+    """Marca uma tarefa como concluída pelo seu ID."""
+    return database.concluir_tarefa(id_tarefa)
+
+
+def remover_tarefa(id_tarefa: int) -> str:
+    """Remove permanentemente uma tarefa pelo seu ID."""
     return database.remover_tarefa(id_tarefa)
-
-def buscar_material_rag(pergunta):
-    """Busca informações técnicas nos materiais de estudo."""
-    # Chama a lógica que você já tem no chat_rag
-    return chat_rag.responder_pergunta(pergunta)
