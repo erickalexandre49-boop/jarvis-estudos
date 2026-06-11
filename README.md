@@ -90,4 +90,5 @@ python -m streamlit run app.py
 ## IAs Utilizadas no Desenvolvimento
 
 - **Cursor (Claude Sonnet):** geração e refatoração de código, arquitetura do sistema
+- **GitHub Copilot / ChatGPT / Gemini:** auxílio na estruturação do código e resolução de bugs
 - **Qwen2.5-14B-Instruct-AWQ:** LLM de produção do agente (via API institucional)
